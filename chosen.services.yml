@@ -1,0 +1,3 @@
+services:
+  chosen.api:
+    class: Drupal\chosen\ChosenAPI
