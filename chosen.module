@@ -13,28 +13,10 @@
 define('CHOSEN_WEBSITE_URL', 'http://harvesthq.github.io/chosen');
 
 /**
- * Implements hook_menu().
- */
-function chosen_menu() {
-  $items = array();
-
-  $items['admin/config/user-interface/chosen'] = array(
-    'title' => 'Chosen',
-    'description' => 'Configuration for Chosen plugin',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('chosen_admin_settings'),
-    'access arguments' => array('administer site configuration'),
-    'file' => 'chosen.admin.inc',
-  );
-
-  return $items;
-}
-
-/**
  * Implements hook_field_widget_info_alter().
  *
  * A list of settings needed by Chosen module for widgets.
- */
+ *
 function chosen_field_widget_info_alter(&$info) {
   $widget_defaults = array(
     'options_select' => '',
@@ -51,7 +33,7 @@ function chosen_field_widget_info_alter(&$info) {
 
 /**
  * Implements hook_form_FORM_ID_alter().
- */
+ *
 function chosen_form_field_ui_field_edit_form_alter(&$form, $form_state) {
   if (empty($form['#field']['locked']) && isset($form['#instance']['widget']['settings']['apply_chosen'])) {
     $form['instance']['widget']['settings']['apply_chosen'] = array(
@@ -62,7 +44,7 @@ function chosen_form_field_ui_field_edit_form_alter(&$form, $form_state) {
         1 => t('Apply'),
       ),
       '#default_value' => $form['#instance']['widget']['settings']['apply_chosen'],
-      '#disabled' => !chosen_get_chosen_path(),
+      '#disabled' => !_chosen_get_chosen_path(),
       '#empty_option' => t('No preference'),
       '#empty_value' => '',
       '#chosen' => FALSE,
@@ -72,7 +54,7 @@ function chosen_form_field_ui_field_edit_form_alter(&$form, $form_state) {
 
 /**
  * Implements hook_field_widget_form_alter().
- */
+ *
 function chosen_field_widget_form_alter(&$element, &$form_state, $context) {
   if (isset($context['instance']['widget']['settings']['apply_chosen'])) {
     $value = $context['instance']['widget']['settings']['apply_chosen'];
@@ -87,9 +69,9 @@ function chosen_field_widget_form_alter(&$element, &$form_state, $context) {
 
 /**
  * Implements hook_library().
- */
+ *
 function chosen_library() {
-  $library_path = chosen_get_chosen_path();
+  $library_path = _chosen_get_chosen_path();
 
   $info['chosen'] = array(
     'title' => 'Chosen',
@@ -152,7 +134,7 @@ function chosen_library() {
 
 /**
  * Implements hook_element_info_alter().
- */
+ *
 function chosen_element_info_alter(&$info) {
   $info['select']['#pre_render'][] = 'chosen_pre_render_select';
 
@@ -167,7 +149,7 @@ function chosen_element_info_alter(&$info) {
 
 /**
  * Render API callback: Apply Chosen to a select element.
- */
+ *
 function chosen_pre_render_select($element) {
   // If the #chosen FAPI property is set, then add the appropriate class.
   if (isset($element['#chosen'])) {
@@ -209,7 +191,7 @@ function chosen_pre_render_select($element) {
 
 /**
  * Render API callback: Apply Chosen to a date_combo element.
- */
+ *
 function chosen_pre_render_date_combo($element) {
   // Because the date_combo field contains many different select elements, we
   // need to recurse down and apply the FAPI property to each one.
@@ -221,7 +203,7 @@ function chosen_pre_render_date_combo($element) {
 
 /**
  * Render API callback: Apply Chosen to a select_or_other element.
- */
+ *
 function chosen_pre_render_select_or_other($element) {
   if ($element['#select_type'] == 'select' && isset($element['#chosen'])) {
     $element['select']['#chosen'] = $element['#chosen'];
@@ -231,7 +213,7 @@ function chosen_pre_render_select_or_other($element) {
 
 /**
  * Recurse through an element to apply the chosen property to any select fields.
- */
+ *
 function chosen_element_apply_property_recursive(array &$element, $chosen_value = NULL) {
   if (!isset($chosen_value)) {
     if (isset($element['#chosen'])) {
@@ -249,3 +231,36 @@ function chosen_element_apply_property_recursive(array &$element, $chosen_value 
   }
 }
 
+/**
+ * Get the location of the chosen library.
+ *
+ * @return
+ *   The location of the library, or FALSE if the library isn't installed.
+ */
+function _chosen_get_chosen_path() {
+  if (function_exists('libraries_get_path')) {
+    return libraries_get_path('chosen');
+  }
+
+  // The following logic is taken from libraries_get_libraries()
+  $searchdir = array();
+
+  // Similar to 'modules' and 'themes' directories inside an installation
+  // profile, installation profiles may want to place libraries into a
+  // 'libraries' directory.
+  $searchdir[] = 'profiles/' . drupal_get_profile() . '/libraries';
+
+  // Always search sites/all/libraries.
+  $searchdir[] = 'libraries';
+
+  // Also search sites/<domain>/*.
+  $searchdir[] = conf_path() . '/libraries';
+
+  foreach ($searchdir as $dir) {
+    if (file_exists($dir . '/chosen/chosen.jquery.min.js')) {
+      return $dir . '/chosen';
+    }
+  }
+
+  return FALSE;
+}
