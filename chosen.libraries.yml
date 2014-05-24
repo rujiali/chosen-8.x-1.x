@@ -1,0 +1,17 @@
+chosen:
+  remote: http://harvesthq.github.io/chosen
+  version: 1.1.0
+  js:
+    libraries/chosen/chosen.jquery.min.js: {}
+
+drupal.chosen:
+  remote: https://drupal.org/project/chosen
+  version: 1.1.0
+  js:
+    module/chosen/chosen.js: {}
+  css:
+    component:
+      module/chosen/css/chosen-drupal.css: {}
+  dependencies:
+    - core/jquery.once
+    - chosen/chosen

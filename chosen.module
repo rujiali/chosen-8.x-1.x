@@ -16,7 +16,7 @@ define('CHOSEN_WEBSITE_URL', 'http://harvesthq.github.io/chosen');
  * Implements hook_field_widget_info_alter().
  *
  * A list of settings needed by Chosen module for widgets.
- *
+ */
 function chosen_field_widget_info_alter(&$info) {
   $widget_defaults = array(
     'options_select' => '',
@@ -33,7 +33,7 @@ function chosen_field_widget_info_alter(&$info) {
 
 /**
  * Implements hook_form_FORM_ID_alter().
- *
+ */
 function chosen_form_field_ui_field_edit_form_alter(&$form, $form_state) {
   if (empty($form['#field']['locked']) && isset($form['#instance']['widget']['settings']['apply_chosen'])) {
     $form['instance']['widget']['settings']['apply_chosen'] = array(
@@ -68,68 +68,45 @@ function chosen_field_widget_form_alter(&$element, &$form_state, $context) {
 }
 
 /**
- * Implements hook_library().
- *
-function chosen_library() {
+ * Implements hook_library_alter().
+ */
+function chosen_library_alter(array &$library, $name) {
   $library_path = _chosen_get_chosen_path();
+  $chosen_conf = \Drupal::config('chosen.settings');
+  $module_path = drupal_get_path('module', 'chosen');
 
-  $info['chosen'] = array(
-    'title' => 'Chosen',
-    'website' => CHOSEN_WEBSITE_URL,
-    'version' => '1.1.0',
-    'js' => array(
-      $library_path . '/chosen.jquery.min.js' => array('group' => 'JS_LIBRARY'),
-    ),
-  );
-  if (variable_get('chosen_use_theme', TRUE)) {
-    $info['chosen']['css'] = array($library_path . '/chosen.css' => array());
+  if ($name == 'chosen/chosen') {
+    if ($chosen_conf->get('chosen_use_theme') == TRUE) {
+      $library['css'] = array($library_path . '/chosen.css' => array());
+    }
   }
 
-  // All the settings that are actually passed through into the chosen()
-  // function are contained in this array.
-  $options = array(
-    'disable_search' => (bool) variable_get('chosen_disable_search', FALSE),
-    'disable_search_threshold' => (int) variable_get('chosen_disable_search_threshold', 0),
-    'search_contains' => (bool) variable_get('chosen_search_contains', FALSE),
-    'placeholder_text_multiple' => variable_get('chosen_placeholder_text_multiple', t('Choose some options')),
-    'placeholder_text_single' => variable_get('chosen_placeholder_text_single', t('Choose an option')),
-    'no_results_text' => variable_get('chosen_no_results_text', t('No results match')),
-    'inherit_select_classes' => TRUE,
-  );
+  if ($name == 'chosen/drupal.chosen') {
+    // All the settings that are actually passed through into the chosen()
+    // function are contained in this array.
+    $options = array(
+      'disable_search' => (bool) $chosen_conf->get('chosen_disable_search'),
+      'disable_search_threshold' => (int) $chosen_conf->get('chosen_disable_search_threshold'),
+      'search_contains' => (bool) $chosen_conf->get('chosen_search_contains'),
+      'placeholder_text_multiple' => $chosen_conf->get('chosen_placeholder_text_multiple'),
+      'placeholder_text_single' => $chosen_conf->get('chosen_placeholder_text_single'),
+      'no_results_text' => $chosen_conf->get('chosen_no_results_text'),
+      'inherit_select_classes' => TRUE,
+    );
 
-  $module_path = drupal_get_path('module', 'chosen');
-  $info['drupal.chosen'] = array(
-    'title' => 'Drupal Chosen integration',
-    'website' => 'https://drupal.org/project/chosen',
-    'version' => '1.1.0',
-    'js' => array(
-      $module_path . '/chosen.js' => array(
-        'group' => JS_DEFAULT,
-        'weight' => 100,
-      ),
-      array(
-        'data' => array(
-          'chosen' => array(
-            'selector' => variable_get('chosen_jquery_selector', 'select:visible'),
-            'minimum_single' => (int) variable_get('chosen_minimum_single', 20),
-            'minimum_multiple' => (int) variable_get('chosen_minimum_multiple', 20),
-            'minimum_width' => (int) variable_get('chosen_minimum_width', 200),
-            'options' => $options,
-          ),
+    $library['js'][] = array(
+      'data' => array(
+        'chosen' => array(
+          'selector' => $chosen_conf->get('chosen_jquery_selector'),
+          'minimum_single' => (int) $chosen_conf->get('chosen_minimum_single'),
+          'minimum_multiple' => (int) $chosen_conf->get('chosen_minimum_multiple'),
+          'minimum_width' => (int) $chosen_conf->get('chosen_minimum_width'),
+          'options' => $options,
         ),
-        'type' => 'setting',
       ),
-    ),
-    'css' => array(
-      $module_path . '/css/chosen-drupal.css' => array(),
-    ),
-    'dependencies' => array(
-      array('system', 'jquery.once'),
-      array('chosen', 'chosen'),
-    ),
-  );
-
-  return $info;
+      'type' => 'setting',
+    );
+  }
 }
 
 /**
@@ -250,7 +227,7 @@ function _chosen_get_chosen_path() {
   // 'libraries' directory.
   $searchdir[] = 'profiles/' . drupal_get_profile() . '/libraries';
 
-  // Always search sites/all/libraries.
+  // Always search libraries.
   $searchdir[] = 'libraries';
 
   // Also search sites/<domain>/*.

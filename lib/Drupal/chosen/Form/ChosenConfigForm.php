@@ -52,17 +52,18 @@ class ChosenConfigForm extends ConfigFormBase {
     }
 
     // Chosen settings
-    $chosen_minimum_single            = \Drupal::config('chosen.settings')->get('chosen_minimum_single');
-    $chosen_minimum_multiple          = \Drupal::config('chosen.settings')->get('chosen_minimum_multiple');
-    $chosen_disable_search_threshold  = \Drupal::config('chosen.settings')->get('chosen_disable_search_threshold');
-    $chosen_minimum_width             = \Drupal::config('chosen.settings')->get('chosen_minimum_width');
-    $chosen_jquery_selector           = \Drupal::config('chosen.settings')->get('chosen_jquery_selector');
-    $chosen_search_contains           = \Drupal::config('chosen.settings')->get('chosen_search_contains');
-    $chosen_disable_search            = \Drupal::config('chosen.settings')->get('chosen_disable_search');
-    $chosen_use_theme                 = \Drupal::config('chosen.settings')->get('chosen_use_theme');
-    $chosen_placeholder_text_multiple = \Drupal::config('chosen.settings')->get('chosen_placeholder_text_multiple');
-    $chosen_placeholder_text_single   = \Drupal::config('chosen.settings')->get('chosen_placeholder_text_single');
-    $chosen_no_results_text           = \Drupal::config('chosen.settings')->get('chosen_no_results_text');
+    $chosen_conf = \Drupal::config('chosen.settings');
+    $chosen_minimum_single            = $chosen_conf->get('chosen_minimum_single');
+    $chosen_minimum_multiple          = $chosen_conf->get('chosen_minimum_multiple');
+    $chosen_disable_search_threshold  = $chosen_conf->get('chosen_disable_search_threshold');
+    $chosen_minimum_width             = $chosen_conf->get('chosen_minimum_width');
+    $chosen_jquery_selector           = $chosen_conf->get('chosen_jquery_selector');
+    $chosen_search_contains           = $chosen_conf->get('chosen_search_contains');
+    $chosen_disable_search            = $chosen_conf->get('chosen_disable_search');
+    $chosen_use_theme                 = $chosen_conf->get('chosen_use_theme');
+    $chosen_placeholder_text_multiple = $chosen_conf->get('chosen_placeholder_text_multiple');
+    $chosen_placeholder_text_single   = $chosen_conf->get('chosen_placeholder_text_single');
+    $chosen_no_results_text           = $chosen_conf->get('chosen_no_results_text');
 
     $form['chosen_minimum_single'] = array(
       '#type' => 'select',
