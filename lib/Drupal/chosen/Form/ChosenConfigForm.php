@@ -68,7 +68,7 @@ class ChosenConfigForm extends ConfigFormBase {
       '#type' => 'select',
       '#title' => t('Minimum number of options for single select'),
       '#options' => array_merge(array('0' => t('Always apply')), range(1, 25)),
-      '#default_value' => isset($chosen_minimum_single) ? $chosen_minimum_single : 20,
+      '#default_value' => $chosen_minimum_single,
       '#description' => t('The minimum number of options to apply Chosen for single select fields. Example : choosing 10 will only apply Chosen if the number of options is greater or equal to 10.'),
     );
 
@@ -76,7 +76,7 @@ class ChosenConfigForm extends ConfigFormBase {
       '#type' => 'select',
       '#title' => t('Minimum number of options for multi select'),
       '#options' => array_merge(array('0' => t('Always apply')), range(1, 25)),
-      '#default_value' => isset($chosen_minimum_multiple) ? $chosen_minimum_multiple : 20,
+      '#default_value' => $chosen_minimum_multiple,
       '#description' => t('The minimum number of options to apply Chosen for multi select fields. Example : choosing 10 will only apply Chosen if the number of options is greater or equal to 10.'),
     );
 
@@ -84,7 +84,7 @@ class ChosenConfigForm extends ConfigFormBase {
       '#type' => 'select',
       '#title' => t('Minimum number to show Search on Single Select'),
       '#options' => array_merge(array('0' => t('Never apply')), range(1, 25)),
-      '#default_value' => isset($chosen_disable_search_threshold) ? $chosen_disable_search_threshold : 0,
+      '#default_value' => $chosen_disable_search_threshold,
       '#description' => t('The minimum number of options to apply Chosen search box. Example : choosing 10 will only apply Chosen search if the number of options is greater or equal to 10.'),
     );
 
@@ -94,7 +94,7 @@ class ChosenConfigForm extends ConfigFormBase {
       '#field_suffix' => 'px',
       '#required' => TRUE,
       '#size' => 3,
-      '#default_value' => isset($chosen_minimum_width) ? $chosen_minimum_width : 200,
+      '#default_value' => $chosen_minimum_width,
       '#description' => t('The minimum width of the Chosen widget.'),
     );
 
@@ -102,7 +102,7 @@ class ChosenConfigForm extends ConfigFormBase {
       '#type' => 'textarea',
       '#title' => t('Apply Chosen to the following elements'),
       '#description' => t('A comma-separated list of jQuery selectors to apply Chosen to, such as <code>select#edit-operation, select#edit-type</code> or <code>.chosen-select</code>. Defaults to <code>select</code> to apply Chosen to all <code>&lt;select&gt;</code> elements.'),
-      '#default_value' => isset($chosen_jquery_selector) ? $chosen_jquery_selector : 'select:visible',
+      '#default_value' => $chosen_jquery_selector,
     );
 
     $form['options'] = array(
@@ -113,7 +113,7 @@ class ChosenConfigForm extends ConfigFormBase {
     $form['options']['chosen_search_contains'] = array(
       '#type' => 'checkbox',
       '#title' => t('Search also in the middle of words'),
-      '#default_value' => isset($chosen_search_contains) ? $chosen_search_contains : FALSE,
+      '#default_value' => $chosen_search_contains,
       '#description' => t('Per default chosen searches only at beginning of words. Enable this option will also find results in the middle of words.
       Example: Search for <em>land</em> will also find <code>Switzer<strong>land</strong></code>.'),
     );
@@ -121,14 +121,14 @@ class ChosenConfigForm extends ConfigFormBase {
     $form['options']['chosen_disable_search'] = array(
       '#type' => 'checkbox',
       '#title' => t('Disable search box'),
-      '#default_value' => isset($chosen_disable_search) ? $chosen_disable_search : FALSE,
+      '#default_value' => $chosen_disable_search,
       '#description' => t('Enable or disable the search box in the results list to filter out possible options.'),
     );
 
     $form['options']['chosen_use_theme'] = array(
       '#type' => 'checkbox',
       '#title' => t('Use the default chosen theme'),
-      '#default_value' => isset($chosen_use_theme) ? $chosen_use_theme : TRUE,
+      '#default_value' => $chosen_use_theme,
       '#description' => t('Enable or disable the default chosen CSS file. Disable this option if your theme contains custom styles for Chosen replacements.'),
     );
 
@@ -141,21 +141,21 @@ class ChosenConfigForm extends ConfigFormBase {
       '#type' => 'textfield',
       '#title' => t('Placeholder text of multiple selects'),
       '#required' => TRUE,
-      '#default_value' => isset($chosen_placeholder_text_multiple) ? $chosen_placeholder_text_multiple : 'Choose some options',
+      '#default_value' => $chosen_placeholder_text_multiple,
     );
 
     $form['strings']['chosen_placeholder_text_single'] = array(
       '#type' => 'textfield',
       '#title' => t('Placeholder text of single selects'),
       '#required' => TRUE,
-      '#default_value' => isset($chosen_placeholder_text_single) ? $chosen_placeholder_text_single : 'Choose an option',
+      '#default_value' => $chosen_placeholder_text_single,
     );
 
     $form['strings']['chosen_no_results_text'] = array(
       '#type' => 'textfield',
       '#title' => t('No results text'),
       '#required' => TRUE,
-      '#default_value' => isset($chosen_no_results_text) ? $chosen_no_results_text : 'No results match',
+      '#default_value' => $chosen_no_results_text,
     );
 
     $form['submit'] = array(
