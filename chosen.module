@@ -16,7 +16,7 @@ define('CHOSEN_WEBSITE_URL', 'http://harvesthq.github.io/chosen');
  * Implements hook_field_widget_info_alter().
  *
  * A list of settings needed by Chosen module for widgets.
- */
+ *
 function chosen_field_widget_info_alter(&$info) {
   $widget_defaults = array(
     'options_select' => '',
