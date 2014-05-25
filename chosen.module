@@ -34,8 +34,8 @@ function chosen_field_widget_info_alter(&$info) {
 /**
  * Implements hook_form_FORM_ID_alter().
  */
-function chosen_form_field_ui_field_edit_form_alter(&$form, $form_state) {
-  if (empty($form['#field']['locked']) && isset($form['#instance']['widget']['settings']['apply_chosen'])) {
+function chosen_form_field_ui_field_instance_edit_form_alter(&$form, $form_state) {
+  if (empty($form['#field']->locked) && isset($form['#instance']['widget']['settings']['apply_chosen'])) {
     $form['instance']['widget']['settings']['apply_chosen'] = array(
       '#type' => 'select',
       '#title' => t('Apply Chosen to the select fields in this widget?'),
@@ -54,7 +54,7 @@ function chosen_form_field_ui_field_edit_form_alter(&$form, $form_state) {
 
 /**
  * Implements hook_field_widget_form_alter().
- *
+ */
 function chosen_field_widget_form_alter(&$element, &$form_state, $context) {
   if (isset($context['instance']['widget']['settings']['apply_chosen'])) {
     $value = $context['instance']['widget']['settings']['apply_chosen'];
@@ -111,22 +111,22 @@ function chosen_library_alter(array &$library, $name) {
 
 /**
  * Implements hook_element_info_alter().
- *
+ */
 function chosen_element_info_alter(&$info) {
   $info['select']['#pre_render'][] = 'chosen_pre_render_select';
 
-  if (module_exists('date')) {
+  if (\Drupal::moduleHandler()->moduleExists('date')) {
     $info['date_combo']['#pre_render'][] = 'chosen_pre_render_date_combo';
   }
 
-  if (module_exists('select_or_other')) {
+  if (\Drupal::moduleHandler()->moduleExists('select_or_other')) {
     $info['select_or_other']['#pre_render'][] = 'chosen_pre_render_select_or_other';
   }
 }
 
 /**
  * Render API callback: Apply Chosen to a select element.
- *
+ */
 function chosen_pre_render_select($element) {
   // If the #chosen FAPI property is set, then add the appropriate class.
   if (isset($element['#chosen'])) {
@@ -156,19 +156,24 @@ function chosen_pre_render_select($element) {
   }
 
   if (isset($element['#field_name']) && !empty($element['#multiple'])) {
-    $field = field_info_field($element['#field_name']);
+    $field = \Drupal\field\Field::fieldInfo()->getField($element['#entity_type'], $element['#field_name']);
     if ($field['cardinality'] != FIELD_CARDINALITY_UNLIMITED && $field['cardinality'] > 1) {
       $element['#attributes']['data-cardinality'] = $field['cardinality'];
     }
   }
 
-  $element['#attached']['library'][] = array('chosen', 'drupal.chosen');
+  $element['#attached'] = array(
+    'library' => array(
+      'chosen/chosen',
+      'chosen/drupal.chosen'
+    ),
+  );
   return $element;
 }
 
 /**
  * Render API callback: Apply Chosen to a date_combo element.
- *
+ */
 function chosen_pre_render_date_combo($element) {
   // Because the date_combo field contains many different select elements, we
   // need to recurse down and apply the FAPI property to each one.
@@ -180,7 +185,7 @@ function chosen_pre_render_date_combo($element) {
 
 /**
  * Render API callback: Apply Chosen to a select_or_other element.
- *
+ */
 function chosen_pre_render_select_or_other($element) {
   if ($element['#select_type'] == 'select' && isset($element['#chosen'])) {
     $element['select']['#chosen'] = $element['#chosen'];
@@ -190,7 +195,7 @@ function chosen_pre_render_select_or_other($element) {
 
 /**
  * Recurse through an element to apply the chosen property to any select fields.
- *
+ */
 function chosen_element_apply_property_recursive(array &$element, $chosen_value = NULL) {
   if (!isset($chosen_value)) {
     if (isset($element['#chosen'])) {
@@ -203,7 +208,7 @@ function chosen_element_apply_property_recursive(array &$element, $chosen_value 
   if (isset($element['#type']) && $element['#type'] == 'select') {
     $element['#chosen'] = $chosen_value;
   }
-  foreach (element_children($element) as $key) {
+  foreach (\Drupal\Core\Render\Element::children($element) as $key) {
     chosen_element_apply_property_recursive($element[$key], $chosen_value);
   }
 }
