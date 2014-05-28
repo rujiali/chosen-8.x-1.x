@@ -11,7 +11,7 @@ drupal.chosen:
     chosen.js: {}
   css:
     component:
-      /module/chosen/css/chosen-drupal.css: {}
+      /modules/chosen/css/chosen-drupal.css: {}
   dependencies:
     - core/jquery.once
     - chosen/chosen

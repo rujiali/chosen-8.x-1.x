@@ -70,7 +70,7 @@ function drush_chosen_plugin() {
     $path = $args[0];
   }
   else {
-    $path = 'sites/all/libraries';
+    $path = 'libraries';
   }
 
   // Create the path if it does not exist.

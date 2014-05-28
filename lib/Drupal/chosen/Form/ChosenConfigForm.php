@@ -13,23 +13,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class ChosenConfigForm extends ConfigFormBase {
   /**
-   * @var \Drupal\chosen\ChosenAPI;
-   */
-  protected $chosenAPI;
-
-  public function __construct(ChosenAPI $chosenAPI) {
-    $this->chosenAPI = $chosenAPI;
-  }
-  /**
-   * This method lets us inject the services this class needs.
-   *
-   * Only inject services that are actually needed. Which services
-   * are needed will vary by the controller.
-   */
-  public static function create(ContainerInterface $container) {
-    return new static($container->get('chosen.api'));
-  }
-  /**
    * {@inheritdoc}.
    */
   public function getFormID() {
