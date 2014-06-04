@@ -13,61 +13,6 @@
 define('CHOSEN_WEBSITE_URL', 'http://harvesthq.github.io/chosen');
 
 /**
- * Implements hook_field_widget_info_alter().
- *
- * A list of settings needed by Chosen module for widgets.
- */
-function chosen_field_widget_info_alter(&$info) {
-  $widget_defaults = array(
-    'options_select' => '',
-    'select_or_other' => '',
-    'date_combo' => 0,
-  );
-
-  foreach ($widget_defaults as $widget => $default) {
-    if (isset($info[$widget])) {
-      $info[$widget]['settings']['apply_chosen'] = $default;
-    }
-  }
-}
-
-/**
- * Implements hook_form_FORM_ID_alter().
- */
-function chosen_form_field_ui_field_instance_edit_form_alter(&$form, $form_state) {
-  if (empty($form['#field']->locked) && isset($form['#instance']['widget']['settings']['apply_chosen'])) {
-    $form['instance']['widget']['settings']['apply_chosen'] = array(
-      '#type' => 'select',
-      '#title' => t('Apply Chosen to the select fields in this widget?'),
-      '#options' => array(
-        0 => t('Do not apply'),
-        1 => t('Apply'),
-      ),
-      '#default_value' => $form['#instance']['widget']['settings']['apply_chosen'],
-      '#disabled' => !_chosen_get_chosen_path(),
-      '#empty_option' => t('No preference'),
-      '#empty_value' => '',
-      '#chosen' => FALSE,
-    );
-  }
-}
-
-/**
- * Implements hook_field_widget_form_alter().
- */
-function chosen_field_widget_form_alter(&$element, &$form_state, $context) {
-  if (isset($context['instance']['widget']['settings']['apply_chosen'])) {
-    $value = $context['instance']['widget']['settings']['apply_chosen'];
-    if ($value === '') {
-      return;
-    }
-    else {
-      $element['#chosen'] = !empty($value);
-    }
-  }
-}
-
-/**
  * Implements hook_library_alter().
  */
 function chosen_library_alter(array &$library, $name) {
