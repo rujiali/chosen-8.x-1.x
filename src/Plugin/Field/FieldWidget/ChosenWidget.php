@@ -45,4 +45,3 @@ class ChosenWidget extends SelectWidget {
   }
 
 }
-

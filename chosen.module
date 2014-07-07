@@ -7,6 +7,9 @@
  * @see http://harvesthq.github.com/chosen/
  */
 
+use Drupal\Core\Field\FieldDefinitionInterface;
+use Drupal\field\Entity\FieldConfig;
+
 /**
  * Define chosen library url
  */
@@ -101,8 +104,8 @@ function chosen_pre_render_select($element) {
   }
 
   if (isset($element['#field_name']) && !empty($element['#multiple'])) {
-    $field = \Drupal\field\Field::fieldInfo()->getField($element['#entity_type'], $element['#field_name']);
-    if ($field['cardinality'] != FIELD_CARDINALITY_UNLIMITED && $field['cardinality'] > 1) {
+    $field = FieldConfig::loadByName($element['#entity_type'], $element['#field_name']);
+    if ($field['cardinality'] != FieldDefinitionInterface::CARDINALITY_UNLIMITED && $field['cardinality'] > 1) {
       $element['#attributes']['data-cardinality'] = $field['cardinality'];
     }
   }
