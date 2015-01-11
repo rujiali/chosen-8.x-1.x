@@ -13,7 +13,7 @@ drupal.chosen:
   version: 1.1.0
   license:
       name: GNU
-      url: https://www.drupal.org/licensing/faq#q1
+      url: https://www.drupal.org/licensing
       gpl-compatible: true
   js:
     chosen.js: {}
