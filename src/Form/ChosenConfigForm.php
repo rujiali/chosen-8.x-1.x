@@ -5,6 +5,7 @@
  */
 namespace Drupal\chosen\Form;
 use Drupal\Core\Form\ConfigFormBase;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\system\Form;
 use Drupal\chosen\ChosenAPI;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -25,7 +26,7 @@ class ChosenConfigForm extends ConfigFormBase {
    * @return
    *   the form array
    */
-  public function buildForm(array $form, array &$form_state) {
+  public function buildForm(array $form, FormStateInterface $form_state) {
     $chosen_path = _chosen_get_chosen_path();
     if (!$chosen_path) {
       drupal_set_message(t('The library could not be detected. You need to download the !chosen and extract the entire contents of the archive into the %path directory on your server.',
@@ -156,20 +157,20 @@ class ChosenConfigForm extends ConfigFormBase {
    * Validates submission by checking for duplicate entries, invalid
    * characters, and that there is an abbreviation and phrase pair
    */
-  public function submitForm(array &$form, array &$form_state) {
+  public function submitForm(array &$form, FormStateInterface $form_state) {
 
     \Drupal::config('chosen.settings')
-      ->set('chosen_minimum_single', $form_state['values']['chosen_minimum_single'])
-      ->set('chosen_minimum_multiple', $form_state['values']['chosen_minimum_multiple'])
-      ->set('chosen_disable_search_threshold', $form_state['values']['chosen_disable_search_threshold'])
-      ->set('chosen_minimum_width', $form_state['values']['chosen_minimum_width'])
-      ->set('chosen_jquery_selector', $form_state['values']['chosen_jquery_selector'])
-      ->set('chosen_search_contains', $form_state['values']['chosen_search_contains'])
-      ->set('chosen_disable_search', $form_state['values']['chosen_disable_search'])
-      ->set('chosen_use_theme', $form_state['values']['chosen_use_theme'])
-      ->set('chosen_placeholder_text_multiple', $form_state['values']['chosen_placeholder_text_multiple'])
-      ->set('chosen_placeholder_text_single', $form_state['values']['chosen_placeholder_text_single'])
-      ->set('chosen_no_results_text', $form_state['values']['chosen_no_results_text'])
+      ->set('chosen_minimum_single', $form_state->getValue('chosen_minimum_single'))
+      ->set('chosen_minimum_multiple', $form_state->getValue('chosen_minimum_multiple'))
+      ->set('chosen_disable_search_threshold', $form_state->getValue('chosen_disable_search_threshold'))
+      ->set('chosen_minimum_width', $form_state->getValue('chosen_minimum_width'))
+      ->set('chosen_jquery_selector', $form_state->getValue('chosen_jquery_selector'))
+      ->set('chosen_search_contains', $form_state->getValue('chosen_search_contains'))
+      ->set('chosen_disable_search', $form_state->getValue('chosen_disable_search'))
+      ->set('chosen_use_theme', $form_state->getValue('chosen_use_theme'))
+      ->set('chosen_placeholder_text_multiple', $form_state->getValue('chosen_placeholder_text_multiple'))
+      ->set('chosen_placeholder_text_single', $form_state->getValue('chosen_placeholder_text_single'))
+      ->set('chosen_no_results_text', $form_state->getValue('chosen_no_results_text'))
       ->save();
 
   }
